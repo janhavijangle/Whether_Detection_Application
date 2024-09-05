@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whether Detection</title>
+    <link rel="stylesheet" href="style.css" />
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
+</head>
+<style>
+    * {
+        padding: 0px;
+        margin: 0px;
+        box-sizing: border-box;
+        font-family: cursive;
+    }
+
+    body {
+        background-color: rgb(1, 8, 40);
+    }
+
+    .container-fluid {
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        width: 500px;
+        height: 600px;
+        box-shadow: 2px 2px 8px rgb(168, 223, 255);
+        background-image: linear-gradient(135deg, #89f7fe 0%, #043982 100%);
+        border-radius: 20px;
+        text-align: center;
+        padding: 50px 20px 50px 20px;
+    }
+
+    input {
+        width: 70%;
+        height: 50px;
+        border-radius: 20px;
+        Padding: 10px 20px;
+        color: darkblue;
+        font-size: 18px;
+        font-weight: 500;
+        border: none;
+        background-color: rgba(244, 250, 255, 0.771);
+    }
+
+    .celcius {
+        font-size: 35px;
+        font-family: cursive;
+        color: rgb(1, 1, 66);
+        font-weight: 600;
+    }
+
+    .city {
+        margin-top: -5px;
+        font-size: 35px;
+        font-family: cursive;
+        color: rgb(1, 1, 66);
+        font-weight: 800;
+    }
+
+    .wind-speed {
+        font-size: 18px;
+        font-family: cursive;
+        color: white;
+        font-weight: 800;
+    }
+
+    .humidity {
+        font-size: 18px;
+        font-family: cursive;
+        color: white;
+        font-weight: 800;
+    }
+
+    .para {
+        margin-top: -20px;
+        font-size: 18px;
+        font-family: cursive;
+        color: rgb(255, 234, 96);
+        font-weight: 800;
+    }
+
+    .error {
+        text-align: center;
+        font-size: 14px;
+        margin-top: 10px;
+        display: none;
+    }
+</style>
+
+<body>
+    <div class="container-fluid">
+        <div class="col-12 d-flex justify-content-evenly flex-md-row flex-column">
+            <div class="d-flex justify-content-center" style="padding-top:100px;">
+                <h1 class="text-white text-start d-flex justify-content-center text-md-start text-center"
+                    style="font-size:60px; font-weight:bolder; font-family:cursive">Whether Detection <br>Application
+                </h1>
+            </div>
+            <div class="card">
+                <div class="search">
+
+                    <input type="text" placeholder="Enter the City Name" spellcheck="false">
+                    <button class="btn" style="background-color:rgb(0, 0, 65);"><img src="search.png" width="30px"
+                            height="30px" /></button>
+
+                </div>
+                <div class="error">
+                    <p>Invalid city name</p>
+
+                </div>
+
+                <div class="whether" style="padding-top:50px; padding-bottom:50px ">
+                    <img src="cloudy-6496471_1280.webp" class="whether-icon" width="210px" height="160px" />
+                    <h1 class="celcius">22°C</h1>
+                    <h2 class="city">India</h2>
+                    <div class="d-flex justify-content-between" style="padding-top:10px; padding-bottom:10px;">
+                        <div>
+                            <img src="humidity_6642975.png" width="80px" height="70px" />
+                            <p class="humidity">50%</p>
+                            <p class="para">Humidity</p>
+                        </div>
+                        <div>
+                            <img src="images__2_-removebg-preview.png" width="80px" height="70px" />
+                            <p class="wind-speed">20 km/hr</p>
+                            <p class="para">Wind Speed</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+        const apiKey = "fef046850552e02f5ea3de2f135b1840";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+        const searchBox = document.querySelector(".search input");
+        const searchButton = document.querySelector(".search button");
+        const whetherIcon = document.querySelector(".weather-icon");
+
+
+
+        async function checkWhether(city) {
+        const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+
+            
+
+
+            if (response.status == 404) 
+            
+            {
+                document.querySelector(".error").style.display = "block";
+                document.querySelector(".weather").style.display = "none";
+            }
+
+            else
+            
+            {
+                var data = await response.json();
+
+                console.log(data);
+
+                document.querySelector(".city").innerHTML = data.name;
+                document.querySelector(".celcius").innerHTML = Math.round(data.main.temp) + "°C";
+                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+                document.querySelector(".wind-speed").innerHTML = data.wind.speed + "km/hr";
+
+
+
+                if (data.whether[0].main == "Clouds") {
+                    whetherIcon.src = "Cloudy_Image-removebg-preview.png";
+                }
+                else if (data.whether[0].main == "Clear") {
+                    whetherIcon.src = "clear.png";
+                }
+                else if (data.whether[0].main == "Rain") {
+                    whetherIcon.src = "rainy.webp";
+                }
+                else if (data.whether[0].main == "Drizzle") {
+                    whetherIcon.src = "Drizzle.png";
+                }
+                else if (data.whether[0].main == "Mist") {
+                    whetherIcon.src = "mist.png";
+                }
+                document.querySelector(".weather").style.display = "block";
+                document.querySelector(".error").style.display = "none";
+
+            }
+
+
+
+            
+            // var data = await response.json();
+
+
+
+
+            // console.log(data);
+
+            // document.querySelector(".city").innerHTML = data.name;
+            // document.querySelector(".celcius").innerHTML = Math.round(data.main.temp) + "°C";
+            // document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+            // document.querySelector(".wind-speed").innerHTML = data.wind.speed + "km/hr";
+
+
+            // if (data.whether[0].main == "Clouds") {
+            //     whetherIcon.src = "Cloudy_Image-removebg-preview.png";
+            // }
+            // else if(data.whether[0].main == "Clear") {
+            //     whetherIcon.src = "clear.png";
+            // }
+            // else if(data.whether[0].main == "Rain") {
+            //     whetherIcon.src = "rainy.webp";
+            // }
+            // else if(data.whether[0].main == "Drizzle") {
+            //     whetherIcon.src = "Drizzle.png";
+            // }
+            // else if(data.whether[0].main == "Mist") {
+            //     whetherIcon.src = "mist.png";
+            // }
+
+        }
+
+        searchButton.addEventListener("click", () => {
+            checkWhether(searchBox.value);
+
+        })
+
+
+
+    </script>
+</body>
+
+</html>
